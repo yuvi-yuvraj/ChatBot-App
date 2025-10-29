@@ -1,111 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot App</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-    <style>
-        body {
-            font-family: monospace;
-            background-color: #f5f5f5;
-            max-width: 500px;
-            margin: auto;
-        }
+    #chat-container {
+      width: 400px;
+      max-width: 95%;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        #chatbot {
-            margin-left: auto;
-            margin-right: auto;
-            width: 40%;
-            margin-top: 50px;
-        }
+    h1 {
+      background-color: #6b3e26;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin: 0;
+      font-size: 22px;
+    }
 
-        .botText {
-            font-family: monospace;
-            font-size: 16px;
-            text-align: left;
-            line-height: 25px;
-            color: brown;
-        }
+    #chatbox {
+      flex-grow: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-        #userInput {
-            margin-left: auto;
-            margin-right: auto;
-            width: 80%;
-            text-align: center;
-            margin-top: 50px;
-        }
+    .botText, .userText {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease-in-out;
+      word-wrap: break-word;
+    }
 
-        #textInput {
-            border-bottom: 3px solid brown;
-            font-family: monospace;
-            font-size: 16px;
+    .botText {
+      align-self: flex-start;
+      background-color: #f0f0f0;
+      color: #333;
+    }
 
-        }
+    .userText {
+      align-self: flex-end;
+      background-color: #007bff;
+      color: white;
+    }
 
-        #buttonInput {
-            font-family: monospace;
-            font-size: 16px;
-            background-color: brown;
-            color: white;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-        }
+    #userInput {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background-color: #fafafa;
+    }
 
-        h1 {
-            text-align: center;
-            color: brown;
-            font-family: monospace;
-        }
+    #textInput {
+      flex-grow: 1;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-size: 15px;
+      outline: none;
+      background-color: #f1f1f1;
+    }
 
-        .userText {
-            font-family: monospace;
-            font-size: 16px;
-            text-align: right;
-            line-height: 25px;
-            color: blue;
-        }
-    </style>
+    #buttonInput {
+      border: none;
+      background-color: #6b3e26;
+      color: white;
+      border-radius: 20px;
+      padding: 10px 18px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
 
+    #buttonInput:hover {
+      background-color: #8b5231;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body>
-    <h1>Chatbot App</h1>
-    <div>
-        <div id="chatbox">
-            <p class="botText"><span>Hi there</span></p>
-        </div>
 
-        <div id="userInput">
-            <input id="textInput" type="text" name="userMessage" placeholder="Type your message here..." />
-            <input type="submit" id="buttonInput" value="Send" />
-        </div>
+<body>
+  <div id="chat-container">
+    <h1>Chatbot 🤖</h1>
+
+    <div id="chatbox">
+      <p class="botText"><span>Hello! How can I help you today?</span></p>
     </div>
 
-    <script>
-        function getUserResponse(){
-           var userText = $('#textInput').val();
-           var userHtml = '<p class="userText">User: <span>' + userText + '</span></p>';
-           $('#textInput').val("");
-           $('#chatbox').append(userHtml);
-           document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
-           $.get("/get", {userMessage: userText}).done(function(data){
-            var botHtml = '<p class="botText">Chatbot: <span>' + data + '</span></p>';
-            $('#chatbox').append(botHtml);
-           });
-        }
+    <div id="userInput">
+      <input id="textInput" type="text" placeholder="Type your message..." />
+      <button id="buttonInput">Send</button>
+    </div>
+  </div>
 
-        $('#textInput').keypress(function(e){
-            if(e.which == 13){
-                getUserResponse();
-            }
-        });
+  <script>
+    function getUserResponse() {
+      var userText = $('#textInput').val().trim();
+      if (userText === "") return;
 
-        $('#buttonInput').click(function(){
-            getUserResponse();
-        });
-    </script>
+      var userHtml = '<p class="userText"><span>' + userText + '</span></p>';
+      $('#chatbox').append(userHtml);
+      $('#textInput').val("");
+      scrollToBottom();
+
+      $.get("/get", { userMessage: userText }).done(function(data) {
+        var botHtml = '<p class="botText"><span>' + data + '</span></p>';
+        $('#chatbox').append(botHtml);
+        scrollToBottom();
+      });
+    }
+
+    function scrollToBottom() {
+      $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+    }
+
+    $('#textInput').keypress(function(e) {
+      if (e.which === 13) getUserResponse();
+    });
+
+    $('#buttonInput').click(function() {
+      getUserResponse();
+    });
+  </script>
 </body>
 </html>
